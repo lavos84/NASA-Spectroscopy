@@ -3,10 +3,10 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 # read in the data
-filenames = ["Win0.clean1.contsub_Jy.rest.scom.c.txt",
-             "Win1.clean1.contsub_Jy.rest.scom.c.txt",
-             "Win2.clean1.contsub_Jy.rest.scom.c.txt",
-             "Win3.clean1.contsub_Jy.rest.scom.c.txt"]
+filenames = ["./Data/Win0.clean1.contsub_Jy.rest.scom.c.txt",
+             "./Data/Win1.clean1.contsub_Jy.rest.scom.c.txt",
+             "./Data/Win2.clean1.contsub_Jy.rest.scom.c.txt",
+             "./Data/Win3.clean1.contsub_Jy.rest.scom.c.txt"]
 # 'data' will be a 4 element list, with each element representing the data from 1 text file
 data = [np.loadtxt(f) for f in filenames]
 
