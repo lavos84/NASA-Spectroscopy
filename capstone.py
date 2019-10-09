@@ -65,10 +65,25 @@ def find_molecules(data):
             results = Splatalogue.query_lines( (freq - delta)*u.GHz, (freq + delta)*u.GHz)
             # Append the chemical names corresponding to the searched frequency.
             molecules[freq] = results["Chemical Name"].tolist() if len(results) > 0 else "Unknown"
+            # Append the chemical name and frequency to the dictionary of all molecules found
+            if len(results) > 0:
+                for molecule in results["Chemical Name"].tolist():
+                    if molecule in all_molecules.keys():
+                        all_molecules[molecule].append(freq)
+                    else:
+                        all_molecules[molecule] = [freq]
+            else:
+                if "Unknown" in all_molecules.keys():
+                    all_molecules["Unknown"].append(freq)
+                else:
+                    all_molecules["Unknown"] = [freq]
         add_lines(id, molecules)
 
+# Run it all
 fig, axs = create_plot()
 axs = axs.flat
-print(fig, axs)
+all_molecules = {"Unknown": []}  # This will store the molecule name and every frequency it is found at
 find_molecules(data)
+for molecule in all_molecules.keys():
+    print(molecule, ": ", all_molecules[molecule])
 plt.show()
