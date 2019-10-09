@@ -37,7 +37,6 @@ def create_plot():
 # Add lines to the plot where molecules were found
 def add_lines(id, molecules):
     """This function will add dashed lines to the plot where molecules were detected"""
-    xrange = axs[id].get_xlim()[1] - axs[id].get_xlim()[0]
     for freq in molecules.keys():
         axs[id].axvline(x = float(freq),
                         ymin = 0,
@@ -46,13 +45,9 @@ def add_lines(id, molecules):
                         linewidth = 0.25,
                         color = "gray",
                         alpha = 0.5)
-        #axs[id].text( (float(freq) - axs[id].get_xlim()[0]) / xrange,
-        #             .95,
-        #             str(molecules[freq]),
-        #             rotation = 90,
-        #             transform = axs[id].transAxes)
 
-def find_molecules(data):
+# Find the frequencies at which molecule flux is significant
+def find_molecules():
     """ Classify the molecules from their frequency for each dataset """
     for id, dataset in enumerate(data):
         # Locate the indices where the flux is greater than 3 standard deviations
@@ -82,8 +77,8 @@ def find_molecules(data):
 # Run it all
 fig, axs = create_plot()
 axs = axs.flat
-all_molecules = {"Unknown": []}  # This will store the molecule name and every frequency it is found at
-find_molecules(data)
+all_molecules = {}  # This will store the molecule name and every frequency it is found at
+find_molecules()
 for molecule in all_molecules.keys():
     print(molecule, ": ", all_molecules[molecule])
 plt.show()
