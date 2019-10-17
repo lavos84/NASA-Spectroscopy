@@ -10,7 +10,7 @@ from astropy import units as u
 # Load in the data if it exists
 if os.path.isfile('./Data/all_molecules.csv'):
     print("\n --- Loading in data ---\n")
-    all_molecules = pd.read_csv('./Data/all_molecules.csv', header = None, index_col = 0, squeeze = True).to_dict()
+    all_molecules = pd.read_csv('./Data/all_molecules.csv', header = 0, index_col = 0).to_dict(orient = "index")
 else:
     # read in the data
     print("\n --- Reading in data ---\n")
@@ -66,21 +66,33 @@ else:
             delta = 0.00005 # +/- when searching frequencies
             frequencies = np.round(dataset[np.where( dataset[:, 1] >= 3 * np.std(dataset[:, 1])), 0], 5)[0]
             for freq in frequencies:
-                results = Splatalogue.query_lines( (freq - delta)*u.GHz, (freq + delta)*u.GHz)
+                results = Splatalogue.query_lines( (freq - delta)*u.GHz, (freq + delta)*u.GHz,
+                                                    show_molecule_tag = True,
+                                                    top20 = 'planet')
                 # Append the chemical names corresponding to the searched frequency.
-                molecules[freq] = results["Chemical Name"].tolist() if len(results) > 0 else "Unknown"
+                if len(results) > 0:
+                    molecules[freq] = {"Chemical Name": results["Chemical Name"].tolist(),
+                                       "Molecule Tag": results["Molecule<br>Tag"].tolist()}
+                else:
+                    molecules[freq] = {"Chemical Name": "Unknown",
+                                       "Molecule Tag": None}
+
                 # Append the chemical name and frequency to the dictionary of all molecules found
                 if len(results) > 0:
-                    for molecule in results["Chemical Name"].tolist():
+                    for i, molecule in enumerate(results["Chemical Name"].tolist()):
                         if molecule in all_molecules.keys():
-                            all_molecules[molecule].append(freq)
+                            all_molecules[molecule]["Occurances"].append(freq)
                         else:
-                            all_molecules[molecule] = [freq]
+                            all_molecules[molecule] = {"Occurances": [freq],
+                                                       "Molecule Tag": results["Molecule<br>Tag"][i],
+                                                       "Linelist": results["Linelist"][i]}
                 else:
                     if "Unknown" in all_molecules.keys():
-                        all_molecules["Unknown"].append(freq)
+                        all_molecules["Unknown"]["Occurances"].append(freq)
                     else:
-                        all_molecules["Unknown"] = [freq]
+                        all_molecules["Unknown"] = {"Occurances": [freq],
+                                                    "Molecule Tag": None,
+                                                    "Linelist": None}
             add_lines(id, molecules)
 
     # Run it all
@@ -89,7 +101,11 @@ else:
     all_molecules = {}  # This will store the molecule name and every frequency it is found at
     find_molecules()
     # Save the all_molecules dictionary for faster run time
-    pd.DataFrame.from_dict(all_molecules).to_csv(index = False)
+    pd.DataFrame.from_dict(all_molecules,
+                           columns = ["Occurances",
+                                      "Molecule Tag",
+                                      "Linelist"],
+                           orient = "index").to_csv("./Data/all_molecules.csv")
 
 # Test that everything worked
 for molecule in all_molecules.keys():
