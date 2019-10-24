@@ -34,7 +34,8 @@ class SpectralQuery:
             self.lines_soup2 = BeautifulSoup(self.lines_page2.content, 'html.parser')
             self.lines = str(self.lines_soup2.find("pre"))
         elif self.database == "JPL":
-            self.lines = str(BeatifulSoup(requests.get(DB_LINES_URL + molecule_tag + ".cat").content, 'html.parser')
+            self.lines = str(BeautifulSoup(requests.get(self.DB_LINES_URL + molecule_tag + ".cat").content, 'html.parser'))
+
         # Clean up the line data
         # Step 1: Remove the <pre> and </pre> and any line breaks before/after them
         if "<pre>\n " in self.lines: self.lines = self.lines.replace("<pre>\n ", "")
