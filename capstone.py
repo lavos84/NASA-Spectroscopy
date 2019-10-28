@@ -71,7 +71,9 @@ def find_molecules():
         for freq in frequencies:
             results = Splatalogue.query_lines( (freq - delta)*u.GHz, (freq + delta)*u.GHz,
                                                 show_molecule_tag = True,
-                                                top20 = 'planet')
+                                                top20 = 'planet',
+                                                line_lists = ['CDMS', 'JPL'],
+                                                line_strengths = 'ls1')
             # Append the chemical names corresponding to the searched frequency.
             if len(results) > 0:
                 molecules[freq] = {"Chemical Name": results["Chemical Name"].tolist(),
@@ -93,8 +95,8 @@ def find_molecules():
                 if "Unknown" in all_molecules.keys():
                     all_molecules["Unknown"]["Occurances"].append(freq)
                 else:
-                    all_molecules["Unknown"] = {"Molecule Tag": None,
-                                                "Linelist": None,
+                    all_molecules["Unknown"] = {"Molecule Tag": "None",
+                                                "Linelist": "None",
                                                 "Occurances": [freq]}
         add_lines(id, molecules)
 

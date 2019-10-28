@@ -56,3 +56,4 @@ class SpectralQuery:
         self.lines = pd.DataFrame(self.lines[0].values.tolist())
         self.lines = pd.DataFrame(self.lines[[0, 1, 2]])
         self.lines.columns = ["frequency", "uncertainty", "intensity"]
+        # It is important to note: "intensity" is given in base 10 logarithm of the integrated intensity at 300 K (in nm^2 * MHz)
