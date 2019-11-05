@@ -45,6 +45,7 @@ class SpectralQuery:
         if "</pre>" in self.lines: self.lines = self.lines.replace("</pre>", "")
         # Step 2: Split the lines at every line break
         self.lines = pd.Series(self.lines.split("\n"))
+        self.lines = self.lines[:-1]  # Drop the last entry
         # Step 3: Separate entries that bleed toghether
         self.lines = self.lines.str.replace(r"([.]\d{4})", r"\1 ")
         # Step 4: Remove extra white space between entries
